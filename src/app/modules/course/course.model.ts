@@ -8,7 +8,7 @@ const TagSchema = new Schema<TTag>({
 });
 
 const CourseSchema = new Schema<TCourse>({
-    title: { type: String, required: true },
+    title: { type: String, required: true, unique: true },
     instructor: { type: String, required: true },
     categoryId: { type: String, required: true },
     price: { type: Number, required: true },

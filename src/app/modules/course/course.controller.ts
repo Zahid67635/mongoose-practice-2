@@ -1,9 +1,9 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import { CourseSchemaValidation } from "./course.validation"
 import { courseServices } from "./course.service"
 import { calculateDurationInWeeks } from "./course.utils"
 
-const createCourse = async (req: Request, res: Response) => {
+const createCourse = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const course = req.body
         const zodData = CourseSchemaValidation.parse(course)
@@ -16,16 +16,8 @@ const createCourse = async (req: Request, res: Response) => {
             data: result
         })
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch (error: any) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-            error: {
-                code: 500,
-                description: error.message
-            }
-        })
+    catch (error) {
+        next(error)
     }
 }
 export const courseControllers = {
