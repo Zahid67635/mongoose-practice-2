@@ -18,6 +18,7 @@ app.use('/api/course', courseRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/reviews', reviewRoutes)
 app.use('/api/courses', reviewRoutes)
+app.use('/api/course', reviewRoutes)
 
 
 app.use(globalErrorHandler)

@@ -22,7 +22,7 @@ const getCourseDetailsFromDB = async (courseId: string) => {
             }
         },
         {
-            $project: { "reviews._id": 0, "reviews.__v": 0, "__v": 0, "tags._id": 0 }
+            $project: { "reviews._id": 0, "reviews.__v": 0, __v: 0, "tags._id": 0 }
         }
     ])
     if (result.length > 0) {
@@ -30,6 +30,46 @@ const getCourseDetailsFromDB = async (courseId: string) => {
     }
     throw new Error('Course Not found')
 }
+
+const bestCourseInDB = async () => {
+    const result = await CourseModel.aggregate([
+
+        {
+            $lookup: {
+                from: "reviews",
+                localField: "_id",
+                foreignField: "courseId",
+                as: "reviews"
+            }
+        },
+        {
+            $addFields: {
+                averageRating: { $avg: "$reviews.rating" },
+                reviewCount: { $size: "$reviews" }
+            }
+        },
+        {
+            $sort: { averageRating: -1 }
+        },
+        {
+            $limit: 1
+        },
+        {
+            $project: {
+                reviews: 0,
+                __v: 0,
+                "tags._id": 0
+            }
+        }
+
+    ])
+    if (result.length > 0) {
+        return result
+    }
+    throw new Error('Course Not found')
+}
+
+
 export const reviewServices = {
-    createReviewIntoDB, getCourseDetailsFromDB
+    createReviewIntoDB, getCourseDetailsFromDB, bestCourseInDB
 }

@@ -39,6 +39,22 @@ const getCourseDetails = async (req: Request, res: Response, next: NextFunction)
     }
 }
 
+const bestCourse = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await reviewServices.bestCourseInDB()
+        res.status(200).json({
+            success: true,
+            statusCode: 201,
+            message: `Course and Reviews retrieved successfully`,
+            data: {
+                course: result[0]
+            }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const reviewControllers = {
-    createReview, getCourseDetails
+    createReview, getCourseDetails, bestCourse
 }
