@@ -1,3 +1,4 @@
+import { Model } from "mongoose";
 
 export type TTag = {
     name: string;
@@ -5,7 +6,6 @@ export type TTag = {
 }
 
 export type TCourse = {
-
     title: string;
     instructor: string;
     categoryId: string;
@@ -20,4 +20,8 @@ export type TCourse = {
         level: 'Beginner' | 'Intermediate' | 'Advanced';
         description: string;
     };
+}
+
+export interface TCategoryModel extends Model<TCourse> {
+    isValidCategoryId(id: string): Promise<TCourse | null>;
 }
