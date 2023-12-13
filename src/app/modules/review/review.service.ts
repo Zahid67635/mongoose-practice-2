@@ -3,9 +3,12 @@ import { TReview } from "../common.interface";
 import { CourseModel } from "../course/course.model";
 import { ReviewModel } from "./review.model";
 
-const createReviewIntoDB = async (review: TReview) => {
-    const result = await ReviewModel.create(review);
-    return result;
+const createReviewIntoDB = async (review: TReview, courseId: string) => {
+    if (await ReviewModel.isValidCourseId(courseId)) {
+        const result = await ReviewModel.create(review);
+        return result;
+    }
+    throw new Error('CourseId is not exists!')
 }
 const getCourseDetailsFromDB = async (courseId: string) => {
     const result = await CourseModel.aggregate([

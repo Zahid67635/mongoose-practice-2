@@ -7,9 +7,10 @@ import { Types } from "mongoose"
 const createReview = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const review = req.body
+        const { courseId } = review
         review.courseId = new Types.ObjectId(review.courseId)
         const zodData = ReviewValidationSchema.parse(review)
-        const result = await reviewServices.createReviewIntoDB(zodData)
+        const result = await reviewServices.createReviewIntoDB(zodData, courseId)
         res.status(200).json({
             success: true,
             statusCode: 201,
