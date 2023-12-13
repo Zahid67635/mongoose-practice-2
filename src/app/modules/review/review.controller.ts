@@ -22,6 +22,23 @@ const createReview = async (req: Request, res: Response, next: NextFunction) => 
     }
 }
 
+const getCourseDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { courseId } = req.params;
+        const result = await reviewServices.getCourseDetailsFromDB(courseId)
+        res.status(200).json({
+            success: true,
+            statusCode: 201,
+            message: `Course and Reviews retrieved successfully`,
+            data: {
+                course: result[0]
+            }
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const reviewControllers = {
-    createReview
+    createReview, getCourseDetails
 }

@@ -17,6 +17,7 @@ app.get('/', (req, res) => {
 app.use('/api/course', courseRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/reviews', reviewRoutes)
+app.use('/api/courses', reviewRoutes)
 
 
 app.use(globalErrorHandler)
