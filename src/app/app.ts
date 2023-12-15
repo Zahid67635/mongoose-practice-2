@@ -15,6 +15,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to the course review operations')
 })
 app.use('/api/course', courseRoutes)
+app.use('/api/courses', courseRoutes)
 app.use('/api/categories', categoryRoutes)
 app.use('/api/reviews', reviewRoutes)
 app.use('/api/courses', reviewRoutes)

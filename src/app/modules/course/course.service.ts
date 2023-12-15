@@ -10,6 +10,25 @@ const createCourseIntoDB = async (course: TCourse) => {
 
 }
 
+const getAllCourseFromDB = async (query: Record<string, unknown>) => {
+    let page = 1;
+    let limit = 0;
+    let skip = 0;
+
+    if (query.limit) {
+        limit = Number(query.limit);
+    }
+
+    if (query.page) {
+        page = Number(query.page);
+        skip = (page - 1) * limit;
+    }
+    const result = await CourseModel.find(query).limit(limit).skip(skip)
+
+    return result;
+
+}
+
 export const courseServices = {
-    createCourseIntoDB
+    createCourseIntoDB, getAllCourseFromDB
 }

@@ -1,18 +1,26 @@
 /* eslint-disable no-unused-vars */
 
-import { NextFunction, Request, Response } from "express"
+import { ErrorRequestHandler } from "express"
+import { ZodError } from "zod";
+import handleZodError from "../errors/handleZodError";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
-    const statusCode = 500
-    const message = err.message || 'Something went wrong'
-
+const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+    let statusCode = 500
+    let message = 'Something went wrong'
+    let errorMessage = ''
+    if (err instanceof ZodError) {
+        const simplifiedError = handleZodError(err);
+        statusCode = simplifiedError?.statusCode;
+        message = simplifiedError?.message;
+        errorMessage = simplifiedError?.errorMessage;
+    }
     return res.status(statusCode).json({
         success: false,
         message,
-        errorMessage: '',
+        errorMessage,
         errorDetails: err,
-        stack: err.message
+        stack: err?.stack
     })
 }
 export default globalErrorHandler
