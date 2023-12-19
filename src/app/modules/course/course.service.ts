@@ -1,6 +1,6 @@
 import { TCourse } from "./course.interface";
 import { CourseModel } from "./course.model";
-import { calculateDurationInWeeks } from "./course.utils";
+import { calculateDurationInWeeks, filter } from "./course.utils";
 
 const createCourseIntoDB = async (course: TCourse) => {
     if (await CourseModel.isValidCategoryId(course.categoryId)) {
@@ -12,34 +12,26 @@ const createCourseIntoDB = async (course: TCourse) => {
 }
 
 const getAllCourseFromDB = async (query: Record<string, unknown>) => {
-    let page = 1;
-    let limit = 0;
-    let skip = 0;
-    let sortCriteria = '-price'
-    if (query.limit) {
-        limit = Number(query.limit);
-    }
 
-    if (query.page) {
-        page = Number(query.page);
-        skip = (page - 1) * limit;
-    }
-    if (query.sortBy === 'title') {
-        sortCriteria = query.sortOrder === 'asc' ? 'title' : '-title'
-    } else if (query.sortBy === 'price') {
-        sortCriteria = query.sortOrder === 'asc' ? 'price' : '-price'
-    } else if (query.sortBy === 'startDate') {
-        sortCriteria = query.sortOrder === 'asc' ? 'startDate' : '-startDate'
-    } else if (query.sortBy === 'endDate') {
-        sortCriteria = query.sortOrder === 'asc' ? 'endDate' : '-endDate'
-    } else if (query.sortBy === 'language') {
-        sortCriteria = query.sortOrder === 'asc' ? 'language' : '-language'
-    } else if (query.sortBy === 'durationInWeeks') {
-        sortCriteria = query.sortOrder === 'asc' ? 'durationInWeeks' : '-durationInWeeks'
-    }
-    const result = await CourseModel.find({}).sort(sortCriteria).limit(limit).skip(skip)
+    const filteredData = filter(CourseModel.find(), query)
+    if (query.sortBy && query.sortOrder) {
+        const sortBy = query.sortBy
+        const sortOrder = query.sortOrder
+        const sortStr = `${sortOrder === 'desc' ? '-' : ''}${sortBy}`
+        filteredData.sort(sortStr)
 
-    return result;
+    }
+    if (query.page || query.limit) {
+        const page = Number(query.page) || 1
+        const limit = Number(query.limit) || 10
+        const skip = (page - 1) * limit
+        filteredData.skip(skip).limit(limit)
+    }
+    else {
+        filteredData.skip(0).limit(10)
+    }
+    const result = await filteredData
+    return result
 
 }
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
